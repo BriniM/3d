@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Enhanced 3D Cube</title>
+    <title>Enhanced 3D Cube with Rotation</title>
     <style>
         body { margin: 0; }
         canvas { display: block; }
@@ -20,6 +20,13 @@
         <button onclick="translateCube('z', -1)">Translate -Z</button>
         <button onclick="zoomCamera(0.9)">Zoom In</button>
         <button onclick="zoomCamera(1.1)">Zoom Out</button>
+        <br>
+        <button onclick="rotateCube('x', 0.1)">Rotate +X</button>
+        <button onclick="rotateCube('x', -0.1)">Rotate -X</button>
+        <button onclick="rotateCube('y', 0.1)">Rotate +Y</button>
+        <button onclick="rotateCube('y', -0.1)">Rotate -Y</button>
+        <button onclick="rotateCube('z', 0.1)">Rotate +Z</button>
+        <button onclick="rotateCube('z', -0.1)">Rotate -Z</button>
     </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script>
@@ -79,6 +86,13 @@
         // Zoom function
         function zoomCamera(scale) {
             camera.position.z *= scale;
+        }
+
+        // Rotation function
+        function rotateCube(axis, angle) {
+            if (axis === 'x') cube.rotation.x += angle;
+            else if (axis === 'y') cube.rotation.y += angle;
+            else if (axis === 'z') cube.rotation.z += angle;
         }
 
         // Handle window resize
