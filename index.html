@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enhanced 3D Cube</title>
+    <style>
+        body { margin: 0; }
+        canvas { display: block; }
+        .controls { position: absolute; top: 20px; left: 20px; z-index: 10; }
+    </style>
+</head>
+<body>
+    <div class="controls">
+        <button onclick="translateCube('x', 1)">Translate +X</button>
+        <button onclick="translateCube('x', -1)">Translate -X</button>
+        <button onclick="translateCube('y', 1)">Translate +Y</button>
+        <button onclick="translateCube('y', -1)">Translate -Y</button>
+        <button onclick="translateCube('z', 1)">Translate +Z</button>
+        <button onclick="translateCube('z', -1)">Translate -Z</button>
+        <button onclick="zoomCamera(0.9)">Zoom In</button>
+        <button onclick="zoomCamera(1.1)">Zoom Out</button>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script>
+        // Initialize scene, camera, and renderer with shadow support
+        const scene = new THREE.Scene();
+        scene.background = new THREE.Color(0xeeeeee);
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.shadowMap.enabled = true;
+        document.body.appendChild(renderer.domElement);
+
+        // Create a cube with a more advanced material
+        const geometry = new THREE.BoxGeometry();
+        const textureLoader = new THREE.TextureLoader();
+        const texture = textureLoader.load('https://threejs.org/examples/textures/brick_diffuse.jpg'); // Use a texture for surface detail
+        const material = new THREE.MeshStandardMaterial({ map: texture });
+        const cube = new THREE.Mesh(geometry, material);
+        cube.castShadow = true;  // Enable shadow casting
+        scene.add(cube);
+
+        // Add a ground plane to receive shadows
+        const planeGeometry = new THREE.PlaneGeometry(10, 10);
+        const planeMaterial = new THREE.ShadowMaterial({ opacity: 0.5 });
+        const plane = new THREE.Mesh(planeGeometry, planeMaterial);
+        plane.rotation.x = - Math.PI / 2;
+        plane.position.y = -1;
+        plane.receiveShadow = true;
+        scene.add(plane);
+
+        // Add lights
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.5); // Soft ambient light
+        scene.add(ambientLight);
+
+        const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+        directionalLight.position.set(5, 5, 5);
+        directionalLight.castShadow = true;  // Enable shadow casting for light
+        scene.add(directionalLight);
+
+        // Set camera position
+        camera.position.z = 5;
+
+        // Render loop
+        function animate() {
+            requestAnimationFrame(animate);
+            renderer.render(scene, camera);
+        }
+        animate();
+
+        // Translation function
+        function translateCube(axis, distance) {
+            if (axis === 'x') cube.position.x += distance;
+            else if (axis === 'y') cube.position.y += distance;
+            else if (axis === 'z') cube.position.z += distance;
+        }
+
+        // Zoom function
+        function zoomCamera(scale) {
+            camera.position.z *= scale;
+        }
+
+        // Handle window resize
+        window.addEventListener('resize', () => {
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+        });
+    </script>
+</body>
+</html>
